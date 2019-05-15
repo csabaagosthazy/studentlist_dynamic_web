@@ -4,8 +4,8 @@ public class ConnectionParameters {
 	
 	
 	// Set your own MariaDB username and password here!
-	public static final String username = "xxxxx"; 
-	public static final String password = "xxxxx";
+	public static final String username = "a1801155"; 
+	public static final String password = "pyDUOj74e";
 	
 	
 	// Do NOT change any of the settings below!

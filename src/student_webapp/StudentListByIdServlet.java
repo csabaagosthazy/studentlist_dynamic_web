@@ -13,7 +13,7 @@ import student_data.Student;
 import student_data.StudentDAO;
 
 @WebServlet("/studentListByIdService")
-public class StudentListById extends HttpServlet {
+public class StudentListByIdServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 

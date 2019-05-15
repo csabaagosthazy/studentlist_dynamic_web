@@ -1,7 +1,6 @@
 package student_data;
 
 import java.sql.Connection;
-
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,8 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
+
 
 
 /**
@@ -130,6 +128,29 @@ public class StudentDAO
 		}
 	}
 	
+	public void deleteStudent(int givenId) throws SQLException {
+		Connection dbConnection = null;
+		
+		try {
+			dbConnection = openConnection();
+			
+			String sqlText = "DELETE "+
+							 "FROM Student WHERE id=? ";
+			
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(sqlText);
+			preparedStatement.setInt(1, givenId);
+			
+			preparedStatement.executeQuery();
+
+			
+		} catch (SQLException sqle)	{
+			throw sqle; 
+		
+		} finally {
+			closeConnection(dbConnection);
+		}
+	}
+	
 	public int insertStudent(Student student) throws SQLException {
 		Connection dbConnection = null;
 		
@@ -158,6 +179,7 @@ public class StudentDAO
 				result = 1;
 				return result;
 			} else {
+				System.out.println("\nClose connection failed. \n" + sqle.getMessage());
 				result = -1;
 				return result;
 			}
@@ -173,10 +195,10 @@ public class StudentDAO
 		}
 	}
 	
-	public JsonArray getAllStudentsJSON() throws SQLException {
-		String jsonString;
-		Gson gson;
-		JsonArray array = new JsonArray();
+	public String getStudentsJSONManual() throws SQLException {
+		String jsonString = "{\"students\":[";
+		//Gson gson;
+		//JSONArray array = new JSONArray();
 		Map<String, String> linkedHashMap = new LinkedHashMap<>();
 		Connection dbConnection = null;
 		
@@ -199,23 +221,28 @@ public class StudentDAO
 				String postcode = resultSet.getString("postcode");
 				String postOffice = resultSet.getString("postoffice");
 				
-				linkedHashMap.put("Id", id);
+				linkedHashMap.put("id", id);
 				linkedHashMap.put("firstname", firstName);
 				linkedHashMap.put("lastname", lastName);
 				linkedHashMap.put("streetaddress", streetAdd);
 				linkedHashMap.put("postcode", postcode);
 				linkedHashMap.put("postoffice", postOffice);
 
-				gson = new Gson();
+				//Gson gson = new Gson();
 
-				jsonString = gson.toJson(linkedHashMap, LinkedHashMap.class);
-				
-				array.add(jsonString);
+				//jsonString = gson.toJson(linkedHashMap, LinkedHashMap.class);
+				jsonString += "{\"id\":\""+linkedHashMap.get("id")+"\","+
+								"\"firstName\":\""+linkedHashMap.get("firstname")+"\","+
+								"\"lastName\":\""+linkedHashMap.get("lastname")+"\","+
+								"\"streetAddress\":\""+linkedHashMap.get("streetaddress")+"\","+
+								"\"postCode\":\""+linkedHashMap.get("postcode")+"\","+
+								"\"postOffice\":\""+linkedHashMap.get("postoffice")+"\"},";
+				//array.add(jsonString);
 				
 			}
-			
-			
-			return array;
+			jsonString = jsonString.substring(0, jsonString.length() - 1);
+			jsonString += "]}";
+			return jsonString;
 			
 		} catch (SQLException sqle)	{
 			throw sqle;	// Let the caller decide what to do with the exception
